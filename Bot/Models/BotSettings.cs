@@ -1,10 +1,8 @@
 ﻿using System;
 namespace Bot.Models
 {
-    public class BotSettings
+    public record BotSettings()
     {
-        public BotSettings()
-        {
-        }
-    }
+        public string ApiKey { get; set; }
+    };
 }

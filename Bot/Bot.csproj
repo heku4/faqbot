@@ -7,8 +7,17 @@
 
   <ItemGroup>
     <None Remove="Telegram.Bot" />
+    <None Remove="etc\" />
+    <None Remove="Models\" />
+    <None Remove="Bot\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Telegram.Bot" Version="16.0.2" />
+    <PackageReference Include="Telegram.Bot.Extensions.Polling" Version="0.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="etc\" />
+    <Folder Include="Models\" />
+    <Folder Include="Bot\" />
   </ItemGroup>
 </Project>

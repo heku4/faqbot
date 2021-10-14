@@ -1,11 +1,10 @@
-﻿{
-  "ConnectionStrings": {
-    "DefaultConnection": "DataSource=app.db"
+﻿[
+  {
+    "Question": "When?",
+    "Answer": "Now!"
   },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Warning"
-    }
-  },
-  "AllowedHosts": "*"
-}
+  {
+    "Question": "Where?",
+    "Answer": "There!"
+  }
+]

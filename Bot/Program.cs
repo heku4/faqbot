@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Bot;
 
 namespace Bot
 {
@@ -8,11 +10,18 @@ namespace Bot
     {
         static async Task Main(string[] args)
         {
-            var botClient = new TelegramBotClient("");
-            var me = await botClient.GetMeAsync();
-            Console.WriteLine(
-              $"Hello, World! I am user {me.Id} and my name is {me.FirstName}."
-            );
+            string faqFilePath = Directory.GetCurrentDirectory() + "/etc/faq.json";
+            string settingsFilePath = Directory.GetCurrentDirectory() + "/etc/appsettings.json";
+
+            using var cts = new CancellationTokenSource();
+
+            var bot = new FaqBot.FaqBot(settingsFilePath, faqFilePath);
+            if (bot.BotSettings.ApiKey is null || bot.Faq is null)
+            {
+                Console.WriteLine("Error! Check your json files.");
+                return;
+            }
+            await bot.BotRun(cts);           
         }
     }
 }
