@@ -10,8 +10,8 @@ namespace Bot
     {
         static async Task Main(string[] args)
         {
-            string faqFilePath = Directory.GetCurrentDirectory() + "/etc/faq.json";
-            string settingsFilePath = Directory.GetCurrentDirectory() + "/etc/appsettings.json";
+            string faqFilePath = Directory.GetCurrentDirectory() + "/faq.json";
+            string settingsFilePath = Directory.GetCurrentDirectory() + "/appsettings.json";
 
             using var cts = new CancellationTokenSource();
 
