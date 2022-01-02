@@ -74,15 +74,15 @@ namespace Bot.FaqBot
             }
         }
 
-        public bool BotSetUp(string settingsFile, string faqFile)
+        public bool BotSetUp(string settingsFilePath, string faqFilePath)
         {
-            if (!System.IO.File.Exists(settingsFile))
+            if (!System.IO.File.Exists(settingsFilePath))
             {
-                Console.WriteLine($"File \"{settingsFile}\" is not exist!");
+                Console.WriteLine($"File \"{settingsFilePath}\" is not exist!");
                 return false;
             }
 
-            var fileText = System.IO.File.ReadAllText(faqFile);
+            var fileText = System.IO.File.ReadAllText(faqFilePath);
             try
             {
                 Faq = JsonSerializer.Deserialize<QA[]>(fileText);
@@ -93,14 +93,13 @@ namespace Bot.FaqBot
                 return false;
             }
 
-
-            if (!System.IO.File.Exists(faqFile))
+            if (!System.IO.File.Exists(faqFilePath))
             {
-                Console.WriteLine($"File \"{faqFile}\" is not exist!");
+                Console.WriteLine($"File \"{faqFilePath}\" is not exist!");
                 return false;
             }
 
-            fileText = System.IO.File.ReadAllText(settingsFile);
+            fileText = System.IO.File.ReadAllText(settingsFilePath);
 
             try
             {
@@ -109,6 +108,12 @@ namespace Bot.FaqBot
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                return false;
+            }
+            
+            if (BotSettings.ApiKey == "")
+            {
+                Console.WriteLine("Error! Your API-key is empty.");
                 return false;
             }
 
