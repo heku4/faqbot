@@ -21,6 +21,11 @@ namespace Bot
                 Console.WriteLine("Error! Check your json files.");
                 return;
             }
+            if (bot.BotSettings.ApiKey == "")
+            {
+                Console.WriteLine("Error! Your API-key is empty.");
+                return;
+            }
             await bot.BotRun(cts);           
         }
     }
