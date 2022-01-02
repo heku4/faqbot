@@ -20,4 +20,8 @@
     <Folder Include="Models\" />
     <Folder Include="Bot\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="etc/faq.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="etc/appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
