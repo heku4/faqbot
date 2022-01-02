@@ -16,20 +16,19 @@ namespace Bot.FaqBot
 {
     public class FaqBot
     {
-        public QA[] Faq;
-        public BotSettings BotSettings;
-        public string ApiKey;
+        private QA[] _faq;
+        private BotSettings _botSettings;
+        public bool initState = true;
         public FaqBot(string settingsFile, string faqFile)
         {
             if(!BotSetUp(settingsFile, faqFile))
             {
-                Faq = null;
-                ApiKey = null;
+                initState = false;
             }
         }
         public async Task BotRun(CancellationTokenSource cts)
         {
-            var botClient = new TelegramBotClient(BotSettings.ApiKey);
+            var botClient = new TelegramBotClient(_botSettings.ApiKey);
             var me = await botClient.GetMeAsync();
             Console.WriteLine($"Hello, World! I am user {me.Id} and my name is {me.FirstName}.");
 
@@ -85,7 +84,7 @@ namespace Bot.FaqBot
             var fileText = System.IO.File.ReadAllText(faqFilePath);
             try
             {
-                Faq = JsonSerializer.Deserialize<QA[]>(fileText);
+                _faq = JsonSerializer.Deserialize<QA[]>(fileText);
             }
             catch (Exception e)
             {
@@ -103,7 +102,7 @@ namespace Bot.FaqBot
 
             try
             {
-               BotSettings = JsonSerializer.Deserialize<BotSettings>(fileText);
+               _botSettings = JsonSerializer.Deserialize<BotSettings>(fileText);
             }
             catch (Exception e)
             {
@@ -111,7 +110,7 @@ namespace Bot.FaqBot
                 return false;
             }
             
-            if (BotSettings.ApiKey == "")
+            if (_botSettings.ApiKey == "")
             {
                 Console.WriteLine("Error! Your API-key is empty.");
                 return false;

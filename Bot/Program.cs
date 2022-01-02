@@ -16,7 +16,7 @@ namespace Bot
             using var cts = new CancellationTokenSource();
 
             var bot = new FaqBot.FaqBot(settingsFilePath, faqFilePath);
-            if (bot.BotSettings.ApiKey is null || bot.Faq is null)
+            if (!bot.initState)
             {
                 Console.WriteLine("Error! Check your json files.");
                 return;
