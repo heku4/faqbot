@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,14 +17,14 @@ namespace Bot.FaqBot
 {
     public class FaqBot
     {
-        private QA[] _faq;
+        private List<QA> _faq;
         private BotSettings _botSettings;
-        public bool initState = true;
-        public FaqBot(string settingsFile, string faqFile)
+        public bool InitStatus = true;
+        public FaqBot(string settingsFilePath, string faqFilePath)
         {
-            if(!BotSetUp(settingsFile, faqFile))
+            if(!BotSetUp(settingsFilePath, faqFilePath))
             {
-                initState = false;
+                InitStatus = false;
             }
         }
         public async Task BotRun(CancellationTokenSource cts)
@@ -63,13 +64,23 @@ namespace Bot.FaqBot
                     return;
 
                 var chatId = update.Message.Chat.Id;
-
                 Console.WriteLine($"Received a '{update.Message.Text}' message in chat {chatId}.");
-
-                await botClient.SendTextMessageAsync(
-                    chatId: chatId,
-                    text: "You said:\n" + update.Message.Text
-                );
+                
+                var questionIndex = _faq.FindIndex(d => d.Question == update.Message.Text.ToString());
+                if (questionIndex >= 0)
+                {
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: $"{_faq[questionIndex].Answer}"
+                    );
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: "You said:\n" + update.Message.Text
+                    ); 
+                }   
             }
         }
 
@@ -84,7 +95,7 @@ namespace Bot.FaqBot
             var fileText = System.IO.File.ReadAllText(faqFilePath);
             try
             {
-                _faq = JsonSerializer.Deserialize<QA[]>(fileText);
+                _faq = JsonSerializer.Deserialize<List<QA>>(fileText);
             }
             catch (Exception e)
             {
