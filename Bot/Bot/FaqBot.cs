@@ -100,8 +100,8 @@ namespace Bot.FaqBot
                         text: "Can't understand your question :\n" + textFormMessage,
                         replyMarkup: new InlineKeyboardMarkup(
                             InlineKeyboardButton.WithCallbackData(
-                                text: "Click to check 'When?' question",
-                                callbackData: "When?")),
+                                text: $"Click to check '{_faq[0].Question}' question",
+                                callbackData: _faq[0].Question)),
                         cancellationToken: cts.Token
                     ); 
                 }   
@@ -124,6 +124,12 @@ namespace Bot.FaqBot
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                return false;
+            }
+
+            if (_faq.Count < 1)
+            {
+                Console.WriteLine("Error! faq.json must contain at least one question with an answer.");
                 return false;
             }
 
@@ -153,6 +159,7 @@ namespace Bot.FaqBot
 
             return true;
         }
+        
         private int GetQuestionIndex(string message)
         {
             var searchStr = message.Trim();
