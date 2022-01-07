@@ -12,6 +12,7 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Bot.FaqBot
 {
@@ -58,27 +59,50 @@ namespace Bot.FaqBot
 
             async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
             {
-                if (update.Type != UpdateType.Message)
-                    return;
-                if (update.Message.Type != MessageType.Text)
-                    return;
+                var textFormMessage = string.Empty;
+                var chatId = new long();
 
-                var chatId = update.Message.Chat.Id;
-                Console.WriteLine($"Received a '{update.Message.Text}' message in chat {chatId}.");
+                switch (update.Type)
+                {
+                    case UpdateType.Message:
+                        textFormMessage = update.Message.Text;
+                        chatId = update.Message.Chat.Id;
+                        Console.WriteLine($"Received a '{textFormMessage}' message in chat {chatId}.");
+                        break;
+                    case UpdateType.CallbackQuery:
+                        textFormMessage = update.CallbackQuery.Data;
+                        chatId = update.CallbackQuery.From.Id;
+                        Console.WriteLine($"Received a '{textFormMessage}' message from user {chatId}.");
+                        break;
+                }
+                if (textFormMessage == "")
+                {
+                   return;
+                }
                 
-                var questionIndex = _faq.FindIndex(d => d.Question == update.Message.Text.ToString());
+                var questionIndex = _faq.FindIndex(d => d.Question.ToLower() == textFormMessage.ToLower());
                 if (questionIndex >= 0)
                 {
                     await botClient.SendTextMessageAsync(
                         chatId: chatId,
-                        text: $"{_faq[questionIndex].Answer}"
+                        text: $"{_faq[questionIndex].Answer}",
+                        replyMarkup: new InlineKeyboardMarkup(
+                            InlineKeyboardButton.WithUrl(
+                                "Check sendMessage method",
+                                "https://core.telegram.org/bots/api#sendmessage")),
+                        cancellationToken: cts.Token
                     );
                 }
                 else
                 {
                     await botClient.SendTextMessageAsync(
                         chatId: chatId,
-                        text: "You said:\n" + update.Message.Text
+                        text: "Can't understand your question :\n" + textFormMessage,
+                        replyMarkup: new InlineKeyboardMarkup(
+                            InlineKeyboardButton.WithCallbackData(
+                                text: "Click to check 'When?' question",
+                                callbackData: "When?")),
+                        cancellationToken: cts.Token
                     ); 
                 }   
             }
