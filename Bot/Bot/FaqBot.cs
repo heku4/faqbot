@@ -80,7 +80,7 @@ namespace Bot.FaqBot
                    return;
                 }
                 
-                var questionIndex = _faq.FindIndex(d => d.Question.ToLower() == textFormMessage.ToLower());
+                var questionIndex = GetQuestionIndex(textFormMessage);
                 if (questionIndex >= 0)
                 {
                     await botClient.SendTextMessageAsync(
@@ -108,7 +108,7 @@ namespace Bot.FaqBot
             }
         }
 
-        public bool BotSetUp(string settingsFilePath, string faqFilePath)
+        private bool BotSetUp(string settingsFilePath, string faqFilePath)
         {
             if (!System.IO.File.Exists(settingsFilePath))
             {
@@ -152,6 +152,21 @@ namespace Bot.FaqBot
             }
 
             return true;
+        }
+        private int GetQuestionIndex(string message)
+        {
+            var searchStr = message.Trim();
+            if (!searchStr.Contains('?'))
+            {
+                searchStr += '?';
+            }
+            var questionIndex = _faq.FindIndex(d => d.Question.ToLower() == searchStr.ToLower());
+            if (questionIndex >= 0)
+            {
+                return questionIndex;
+            }
+            
+            return -1;
         }
     }
 }
