@@ -86,10 +86,6 @@ namespace Bot.FaqBot
                     await botClient.SendTextMessageAsync(
                         chatId: chatId,
                         text: $"{_faq[questionIndex].Answer}",
-                        replyMarkup: new InlineKeyboardMarkup(
-                            InlineKeyboardButton.WithUrl(
-                                "Check sendMessage method",
-                                "https://core.telegram.org/bots/api#sendmessage")),
                         cancellationToken: cts.Token
                     );
                 }
