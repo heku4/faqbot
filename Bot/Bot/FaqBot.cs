@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -31,6 +32,12 @@ namespace Bot.FaqBot
         public async Task BotRun(CancellationTokenSource cts)
         {
             var botClient = new TelegramBotClient(_botSettings.ApiKey);
+            
+            var command = new BotCommand(){Command = "showquestions", Description = "Show a list of questions."};
+            var commands = new List<BotCommand>(){command};
+            await botClient.SetMyCommandsAsync(commands);
+            //await botClient.GetMyCommandsAsync();
+
             var me = await botClient.GetMeAsync();
             Console.WriteLine($"Hello, World! I am user {me.Id} and my name is {me.FirstName}.");
 
@@ -64,6 +71,7 @@ namespace Bot.FaqBot
 
                 switch (update.Type)
                 {
+                    // update.message.
                     case UpdateType.Message:
                         textFormMessage = update.Message.Text;
                         chatId = update.Message.Chat.Id;
@@ -79,28 +87,48 @@ namespace Bot.FaqBot
                 {
                    return;
                 }
-                
-                var questionIndex = GetQuestionIndex(textFormMessage);
-                if (questionIndex >= 0)
+
+                if (textFormMessage.StartsWith('/'))
                 {
-                    await botClient.SendTextMessageAsync(
-                        chatId: chatId,
-                        text: $"{_faq[questionIndex].Answer}",
-                        cancellationToken: cts.Token
-                    );
+                    if (textFormMessage.Remove(0, 1) == command.Command)
+                    {
+                        await botClient.SendTextMessageAsync(
+                            chatId: chatId,
+                            text: $"This is {command.Command}.",
+                            cancellationToken: cts.Token);
+                    }
+                    else
+                    {
+                        await botClient.SendTextMessageAsync(
+                            chatId: chatId,
+                            text: "Unknown command.",
+                            cancellationToken: cts.Token);
+                    }
                 }
                 else
                 {
-                    await botClient.SendTextMessageAsync(
-                        chatId: chatId,
-                        text: "Can't understand your question :\n" + textFormMessage,
-                        replyMarkup: new InlineKeyboardMarkup(
-                            InlineKeyboardButton.WithCallbackData(
-                                text: $"Click to check '{_faq[0].Question}' question",
-                                callbackData: _faq[0].Question)),
-                        cancellationToken: cts.Token
-                    ); 
-                }   
+                    var questionIndex = GetQuestionIndex(textFormMessage);
+                    if (questionIndex >= 0)
+                    {
+                        await botClient.SendTextMessageAsync(
+                            chatId: chatId,
+                            text: $"{_faq[questionIndex].Answer}",
+                            cancellationToken: cts.Token
+                        );
+                    }
+                    else
+                    {
+                        await botClient.SendTextMessageAsync(
+                            chatId: chatId,
+                            text: "Can't understand your question :\n" + textFormMessage,
+                            replyMarkup: new InlineKeyboardMarkup(
+                                InlineKeyboardButton.WithCallbackData(
+                                    text: $"Click to check '{_faq[0].Question}' question",
+                                    callbackData: _faq[0].Question)),
+                            cancellationToken: cts.Token
+                        ); 
+                    }  
+                }
             }
         }
 
