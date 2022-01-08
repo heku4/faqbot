@@ -92,19 +92,22 @@ namespace Bot.FaqBot
                 {
                     if (textFormMessage.Remove(0, 1) == command.Command)
                     {
-                        var inlineKeysInfoForAnswer = new List<InlineKeyboardButton>() { };
+                        var keyboardWithCallback = new List<List<InlineKeyboardButton>>();
+
                         foreach (var qaData in _faq)
                         {
                             var botKeyButtonData = InlineKeyboardButton.WithCallbackData(
                                 text: $"{qaData.Question}",
                                 callbackData: qaData.Question);
-                            inlineKeysInfoForAnswer.Add(botKeyButtonData);
+                            var buffer = new List<InlineKeyboardButton>();
+                            buffer.Add(botKeyButtonData);
+                            keyboardWithCallback.Add(buffer);
                         }
 
-                        var markupForAnswer = new InlineKeyboardMarkup(inlineKeysInfoForAnswer);
+                        var markupForAnswer = new InlineKeyboardMarkup(keyboardWithCallback);
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
-                            text: $"This is {command.Command}.",
+                            text: $"Available questions:",
                             replyMarkup: markupForAnswer,
                             cancellationToken: cts.Token);
                     }
