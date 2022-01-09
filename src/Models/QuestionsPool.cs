@@ -9,28 +9,24 @@ namespace Bot
     public record Answer(AnswerType Type)
     {
         public string? Text { get; init; }
-        public string? DocumetUrl { get; init; }
+        public string? DocumentUrl { get; init; }
         public Venue? VenueData { get; init; }
         public Location? LocationData { get; init; }
+        public Contact? ContactData { get; init; }
     };
 
     public enum AnswerType
     {
         Text,
-        Photo,
         Venue,
         Location,
-        Document
+        Document,
+        Contact
     }
 
-    public record Venue(string Title, string Address, float Latitude, float Longtitude);
+    public record Venue(string Title, string Address, float Latitude, float Longitude);
 
-    public record Location(float Latitude, float Longtitude);
+    public record Location(float Latitude, float Longitude);
+
+    public record Contact(string FirstName, string LastName, string PhoneNumber);
 }
-/*
- * new scheme
-----answer scheme---
-Document: 'document' field in json and in message
-text formating: *bold* `info`
-
-*/

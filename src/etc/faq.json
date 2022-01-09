@@ -1,16 +1,49 @@
 ﻿[
   {
-    "Question": "When?",
+    "Question": "When (Text)?",
     "Answer": {
       "Text" : "Now!",
       "Type" : 0
     }
   },
   {
-    "Question": "Where?",
+    "Question": "Where (Venue)?",
     "Answer": {
-      "Text" : "There!",
-      "Type" : 0
+      "VenueData": {
+        "Latitude" : 50.0840172,
+        "Longitude" : 14.418288,
+        "Address" : "Husova, 110 00 Staré Město, Czechia",
+        "Title" : "Man Hanging out"
+      },
+      "Type" : 1
+    }
+  },
+  {
+    "Question": "Where (Location)?",
+    "Answer": {
+      "LocationData": {
+        "Latitude" : 33.747252,
+        "Longitude" : -112.633853
+      },
+      "Type" : 2
+    }
+  },
+  {
+    "Question": "Any documents?",
+    "Answer": {
+      "DocumentUrl" : "https://github.com/TelegramBots/book/raw/master/src/docs/photo-ara.jpg",
+      "Type" : 3
+    }
+  },
+  {
+    "Question": "Any contacts?",
+    "Answer": {
+      "ContactData": {
+      "FirstName" : "Xek",
+      "LastName" : "Xekov",
+      "PhoneNumber" : "+0987654321"
+      },
+      "Type" : 4
     }
   }
 ]
