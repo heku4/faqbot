@@ -1,10 +1,16 @@
 ﻿[
   {
     "Question": "When?",
-    "Answer": "Now!"
+    "Answer": {
+      "Text" : "Now!",
+      "Type" : 0
+    }
   },
   {
     "Question": "Where?",
-    "Answer": "There!"
+    "Answer": {
+      "Text" : "There!",
+      "Type" : 0
+    }
   }
 ]

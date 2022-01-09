@@ -71,7 +71,6 @@ namespace Bot.FaqBot
 
                 switch (update.Type)
                 {
-                    // update.message.
                     case UpdateType.Message:
                         textFormMessage = update.Message.Text;
                         chatId = update.Message.Chat.Id;
@@ -126,7 +125,7 @@ namespace Bot.FaqBot
                     {
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
-                            text: $"{_faq[questionIndex].Answer}",
+                            text: $"{_faq[questionIndex].Answer.Text ?? ""}",
                             cancellationToken: cts.Token
                         );
                     }
@@ -205,13 +204,8 @@ namespace Bot.FaqBot
             {
                 searchStr += '?';
             }
-            var questionIndex = _faq.FindIndex(d => d.Question.ToLower() == searchStr.ToLower());
-            if (questionIndex >= 0)
-            {
-                return questionIndex;
-            }
-            
-            return -1;
+            var questionIndex = _faq.FindIndex(d => d.Question.ToLower() == searchStr.ToLower()); 
+            return questionIndex;
         }
     }
 }
