@@ -1,8 +1,8 @@
 ﻿[
   {
-    "Question": "When (Text)?",
+    "Question": "Who are you?",
     "Answer": {
-      "Text" : "Now!",
+      "Text" : "Hello! I am the Telegram-bot FAQBot.",
       "Type" : 0
     }
   },
@@ -31,7 +31,9 @@
   {
     "Question": "Any documents?",
     "Answer": {
-      "DocumentUrl" : "https://github.com/TelegramBots/book/raw/master/src/docs/photo-ara.jpg",
+      "DocumentData" : {
+        "DocumentUrl" : "https://github.com/TelegramBots/book/raw/master/src/docs/photo-ara.jpg"
+      },
       "Type" : 3
     }
   },

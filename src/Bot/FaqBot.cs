@@ -218,7 +218,7 @@ namespace Bot.FaqBot
                 case AnswerType.Document:
                     await bot.SendDocumentAsync(
                         chatId: chatId,
-                        document: responseMessage.DocumentUrl,
+                        document: responseMessage.DocumentData.DocumentUrl,
                         cancellationToken: ct
                     );
                     break;
