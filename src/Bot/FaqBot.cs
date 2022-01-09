@@ -71,7 +71,6 @@ namespace Bot.FaqBot
 
                 switch (update.Type)
                 {
-                    // update.message.
                     case UpdateType.Message:
                         textFormMessage = update.Message.Text;
                         chatId = update.Message.Chat.Id;
@@ -124,11 +123,7 @@ namespace Bot.FaqBot
                     var questionIndex = GetQuestionIndex(textFormMessage);
                     if (questionIndex >= 0)
                     {
-                        await botClient.SendTextMessageAsync(
-                            chatId: chatId,
-                            text: $"{_faq[questionIndex].Answer}",
-                            cancellationToken: cts.Token
-                        );
+                        await SendResponseMessageAsync(botClient, _faq[questionIndex].Answer, chatId, cts.Token);
                     }
                     else
                     {
@@ -205,13 +200,54 @@ namespace Bot.FaqBot
             {
                 searchStr += '?';
             }
-            var questionIndex = _faq.FindIndex(d => d.Question.ToLower() == searchStr.ToLower());
-            if (questionIndex >= 0)
-            {
-                return questionIndex;
-            }
-            
-            return -1;
+            var questionIndex = _faq.FindIndex(d => d.Question.ToLower() == searchStr.ToLower()); 
+            return questionIndex;
         }
+
+        private async Task SendResponseMessageAsync(ITelegramBotClient bot, Answer responseMessage, long chatId, CancellationToken ct)
+        {
+            switch (responseMessage.Type)
+            {
+                case AnswerType.Text:
+                    await bot.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: $"{responseMessage.Text ?? ""}",
+                        cancellationToken: ct
+                    );
+                    break;
+                case AnswerType.Document:
+                    await bot.SendDocumentAsync(
+                        chatId: chatId,
+                        document: responseMessage.DocumentData.DocumentUrl,
+                        cancellationToken: ct
+                    );
+                    break;
+                case AnswerType.Venue:
+                    await bot.SendVenueAsync(
+                        chatId: chatId,
+                        latitude: responseMessage.VenueData.Latitude,
+                        longitude: responseMessage.VenueData.Longitude,
+                        title: responseMessage.VenueData.Title,
+                        address: responseMessage.VenueData.Address,
+                        cancellationToken: ct);
+                    break;
+                case AnswerType.Location:
+                    await bot.SendLocationAsync(
+                        chatId: chatId,
+                        latitude: responseMessage.LocationData.Latitude,
+                        longitude: responseMessage.LocationData.Longitude,
+                        cancellationToken: ct);
+                    break;
+                case AnswerType.Contact:
+                    await bot.SendContactAsync(
+                        chatId: chatId,
+                        firstName: responseMessage.ContactData.FirstName,
+                        lastName: responseMessage.ContactData.LastName,
+                        phoneNumber: responseMessage.ContactData.PhoneNumber,
+                        cancellationToken: ct
+                    );
+                    break;
+            }
+        } 
     }
 }
