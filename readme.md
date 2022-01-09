@@ -7,7 +7,6 @@ The application uses the [Telegram-bot](https://github.com/TelegramBots) client.
 #### faq.json scheme
 ```
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "array",
   "items": [
     {
@@ -27,6 +26,7 @@ The application uses the [Telegram-bot](https://github.com/TelegramBots) client.
             }
           },
           "required": [
+            "Text",
             "Type"
           ]
         }
@@ -36,6 +36,170 @@ The application uses the [Telegram-bot](https://github.com/TelegramBots) client.
         "Answer"
       ]
     },
+    {
+      "type": "object",
+      "properties": {
+        "Question": {
+          "type": "string"
+        },
+        "Answer": {
+          "type": "object",
+          "properties": {
+            "VenueData": {
+              "type": "object",
+              "properties": {
+                "Latitude": {
+                  "type": "number"
+                },
+                "Longitude": {
+                  "type": "number"
+                },
+                "Address": {
+                  "type": "string"
+                },
+                "Title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "Latitude",
+                "Longitude",
+                "Address",
+                "Title"
+              ]
+            },
+            "Type": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "VenueData",
+            "Type"
+          ]
+        }
+      },
+      "required": [
+        "Question",
+        "Answer"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "Question": {
+          "type": "string"
+        },
+        "Answer": {
+          "type": "object",
+          "properties": {
+            "LocationData": {
+              "type": "object",
+              "properties": {
+                "Latitude": {
+                  "type": "number"
+                },
+                "Longitude": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "Latitude",
+                "Longitude"
+              ]
+            },
+            "Type": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "LocationData",
+            "Type"
+          ]
+        }
+      },
+      "required": [
+        "Question",
+        "Answer"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "Question": {
+          "type": "string"
+        },
+        "Answer": {
+          "type": "object",
+          "properties": {
+            "DocumentData": {
+              "type": "object",
+              "properties": {
+                "DocumentUrl": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "DocumentUrl"
+              ]
+            },
+            "Type": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "DocumentData",
+            "Type"
+          ]
+        }
+      },
+      "required": [
+        "Question",
+        "Answer"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "Question": {
+          "type": "string"
+        },
+        "Answer": {
+          "type": "object",
+          "properties": {
+            "ContactData": {
+              "type": "object",
+              "properties": {
+                "FirstName": {
+                  "type": "string"
+                },
+                "LastName": {
+                  "type": "string"
+                },
+                "PhoneNumber": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "FirstName",
+                "LastName",
+                "PhoneNumber"
+              ]
+            },
+            "Type": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "ContactData",
+            "Type"
+          ]
+        }
+      },
+      "required": [
+        "Question",
+        "Answer"
+      ]
+    }
   ]
 }
 ```
