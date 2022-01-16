@@ -225,6 +225,7 @@ namespace Bot.FaqBot
                     await bot.SendDocumentAsync(
                         chatId: chatId,
                         document: responseMessage.DocumentData.DocumentUrl,
+                        caption: responseMessage.DocumentData.Caption,
                         cancellationToken: ct
                     );
                     break;

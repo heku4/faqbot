@@ -32,7 +32,8 @@
     "Question": "Any documents?",
     "Answer": {
       "DocumentData" : {
-        "DocumentUrl" : "https://github.com/TelegramBots/book/raw/master/src/docs/photo-ara.jpg"
+        "DocumentUrl" : "https://github.com/TelegramBots/book/raw/master/src/docs/photo-ara.jpg",
+        "Caption" : "Ara bird."
       },
       "Type" : 3
     }

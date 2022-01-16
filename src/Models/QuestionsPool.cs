@@ -27,7 +27,7 @@ namespace Bot
         Contact
     }
 
-    public record Document(string DocumentUrl);
+    public record Document(string DocumentUrl, string Caption);
     
     public record Venue(string Title, string Address, float Latitude, float Longitude);
 
