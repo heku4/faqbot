@@ -22,9 +22,9 @@ namespace Bot.FaqBot
         private List<QA> _faq;
         private BotSettings _botSettings;
         public bool InitStatus = true;
-        public FaqBot(string settingsFilePath, string faqFilePath)
+        public FaqBot(string settingsFilePath, string faqFilePath, string? apiKey)
         {
-            if(!BotSetUp(settingsFilePath, faqFilePath))
+            if(!BotSetUp(settingsFilePath, faqFilePath, apiKey))
             {
                 InitStatus = false;
             }
@@ -141,7 +141,7 @@ namespace Bot.FaqBot
             }
         }
 
-        private bool BotSetUp(string settingsFilePath, string faqFilePath)
+        private bool BotSetUp(string settingsFilePath, string faqFilePath, string? apiKey = null)
         {
             if (!System.IO.File.Exists(settingsFilePath))
             {
@@ -183,10 +183,16 @@ namespace Bot.FaqBot
                 Console.WriteLine(e);
                 return false;
             }
+
+            if (!string.IsNullOrEmpty(apiKey))
+            {
+                _botSettings.ApiKey = apiKey;
+            }
+            
             
             if (_botSettings.ApiKey == "")
             {
-                Console.WriteLine("Error! Your API-key is empty.");
+                Console.WriteLine("Error! Your API-key is empty. Check your environment or settings file.");
                 return false;
             }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,12 +9,13 @@ namespace Bot
     {
         static async Task Main(string[] args)
         {
+            var apiKeyFromEnv = Environment.GetEnvironmentVariable("ApiKey");
             string faqFilePath = Directory.GetCurrentDirectory() + "/etc/faq.json";
             string settingsFilePath = Directory.GetCurrentDirectory() + "/etc/appsettings.json";
-
+            
             using var cts = new CancellationTokenSource();
 
-            var bot = new FaqBot.FaqBot(settingsFilePath, faqFilePath);
+            var bot = new FaqBot.FaqBot(settingsFilePath, faqFilePath, apiKeyFromEnv);
             if (!bot.InitStatus)
             {
                 Console.WriteLine("Error! Check your json files.");
