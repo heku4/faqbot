@@ -22,6 +22,7 @@ namespace Bot.FaqBot
         private List<QA> _faq;
         private BotSettings _botSettings;
         public bool InitStatus = true;
+        private const string ALL_QUESTIONS_COMMAND = "showquestions";
         public FaqBot(string settingsFilePath, string faqFilePath, string? apiKey)
         {
             if(!BotSetUp(settingsFilePath, faqFilePath, apiKey))
@@ -33,13 +34,22 @@ namespace Bot.FaqBot
         {
             var botClient = new TelegramBotClient(_botSettings.ApiKey);
             
-            var command = new BotCommand(){Command = "showquestions", Description = "Show a list of questions."};
-            var commands = new List<BotCommand>(){command};
+            var main_command = new BotCommand(){Command = ALL_QUESTIONS_COMMAND, Description = "Show a list of questions."};
+            var commands = new List<BotCommand>(){main_command};
+            foreach (var bundle in _faq)
+            {
+                commands.Add(new BotCommand()
+                    {
+                        Command = $"{bundle.Category.ToLower()}",
+                        Description = $"Questions from the '{bundle.Category}' category"
+                    });
+            }
+            
             await botClient.SetMyCommandsAsync(commands);
             //await botClient.GetMyCommandsAsync();
 
             var me = await botClient.GetMeAsync();
-            Console.WriteLine($"Hello, World! I am user {me.Id} and my name is {me.FirstName}.");
+            Console.WriteLine($"I am user {me.Id} and my name is {me.FirstName}.");
 
             // StartReceiving does not block the caller thread. Receiving is done on the ThreadPool.
             botClient.StartReceiving(
@@ -89,15 +99,16 @@ namespace Bot.FaqBot
 
                 if (textFormMessage.StartsWith('/'))
                 {
-                    if (textFormMessage.Remove(0, 1) == command.Command)
+                    var incomingCommand = textFormMessage.Remove(0, 1);
+                    if ( incomingCommand == main_command.Command)
                     {
                         var keyboardWithCallback = new List<List<InlineKeyboardButton>>();
 
-                        foreach (var qaData in _faq)
+                        foreach (var bundle in _faq)
                         {
                             var botKeyButtonData = InlineKeyboardButton.WithCallbackData(
-                                text: $"{qaData.Question}",
-                                callbackData: qaData.Question);
+                                text: $"{bundle.Question}",
+                                callbackData: bundle.Question);
                             var buffer = new List<InlineKeyboardButton>();
                             buffer.Add(botKeyButtonData);
                             keyboardWithCallback.Add(buffer);
@@ -107,6 +118,27 @@ namespace Bot.FaqBot
                         await botClient.SendTextMessageAsync(
                             chatId: chatId,
                             text: $"Available questions:",
+                            replyMarkup: markupForAnswer,
+                            cancellationToken: cts.Token);
+                    }
+                    else if (_faq.Select(qa => qa.Category.ToLower()).Contains(incomingCommand))
+                    {
+                        var keyboardWithCallback = new List<List<InlineKeyboardButton>>();
+                        var allByCategory = _faq.FindAll(qa => qa.Category.ToLower() == incomingCommand);
+                        foreach (var bundle in allByCategory)
+                        {
+                            var botKeyButtonData = InlineKeyboardButton.WithCallbackData(
+                                text: $"{bundle.Question}",
+                                callbackData: bundle.Question);
+                            var buffer = new List<InlineKeyboardButton>();
+                            buffer.Add(botKeyButtonData);
+                            keyboardWithCallback.Add(buffer);
+                        }
+
+                        var markupForAnswer = new InlineKeyboardMarkup(keyboardWithCallback);
+                        await botClient.SendTextMessageAsync(
+                            chatId: chatId,
+                            text: $"Available questions in '{incomingCommand}' category:",
                             replyMarkup: markupForAnswer,
                             cancellationToken: cts.Token);
                     }

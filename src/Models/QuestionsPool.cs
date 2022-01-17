@@ -6,7 +6,7 @@ using Telegram.Bot.Types;
 
 namespace Bot
 {
-    public record QA(string Question, Answer Answer);
+    public record QA(string Question, Answer Answer, string Category);
 
     public record Answer(AnswerType Type)
     {

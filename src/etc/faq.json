@@ -1,5 +1,6 @@
 ﻿[
   {
+    "Category" : "Common",
     "Question": "Who are you?",
     "Answer": {
       "Text" : "Hello! I am the Telegram-bot FAQBot.",
@@ -7,6 +8,7 @@
     }
   },
   {
+    "Category" : "Navigation",
     "Question": "Where (Venue)?",
     "Answer": {
       "VenueData": {
@@ -19,6 +21,7 @@
     }
   },
   {
+    "Category" : "Navigation",
     "Question": "Where (Location)?",
     "Answer": {
       "LocationData": {
@@ -29,6 +32,7 @@
     }
   },
   {
+    "Category" : "Media",
     "Question": "Any documents?",
     "Answer": {
       "DocumentData" : {
@@ -39,6 +43,7 @@
     }
   },
   {
+    "Category" : "Usefully",
     "Question": "Any contacts?",
     "Answer": {
       "ContactData": {
