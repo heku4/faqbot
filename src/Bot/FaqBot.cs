@@ -99,56 +99,7 @@ namespace Bot.FaqBot
 
                 if (textFormMessage.StartsWith('/'))
                 {
-                    var incomingCommand = textFormMessage.Remove(0, 1);
-                    if ( incomingCommand == main_command.Command)
-                    {
-                        var keyboardWithCallback = new List<List<InlineKeyboardButton>>();
-
-                        foreach (var bundle in _faq)
-                        {
-                            var botKeyButtonData = InlineKeyboardButton.WithCallbackData(
-                                text: $"{bundle.Question}",
-                                callbackData: bundle.Question);
-                            var buffer = new List<InlineKeyboardButton>();
-                            buffer.Add(botKeyButtonData);
-                            keyboardWithCallback.Add(buffer);
-                        }
-
-                        var markupForAnswer = new InlineKeyboardMarkup(keyboardWithCallback);
-                        await botClient.SendTextMessageAsync(
-                            chatId: chatId,
-                            text: $"Available questions:",
-                            replyMarkup: markupForAnswer,
-                            cancellationToken: cts.Token);
-                    }
-                    else if (_faq.Select(qa => qa.Category.ToLower()).Contains(incomingCommand))
-                    {
-                        var keyboardWithCallback = new List<List<InlineKeyboardButton>>();
-                        var allByCategory = _faq.FindAll(qa => qa.Category.ToLower() == incomingCommand);
-                        foreach (var bundle in allByCategory)
-                        {
-                            var botKeyButtonData = InlineKeyboardButton.WithCallbackData(
-                                text: $"{bundle.Question}",
-                                callbackData: bundle.Question);
-                            var buffer = new List<InlineKeyboardButton>();
-                            buffer.Add(botKeyButtonData);
-                            keyboardWithCallback.Add(buffer);
-                        }
-
-                        var markupForAnswer = new InlineKeyboardMarkup(keyboardWithCallback);
-                        await botClient.SendTextMessageAsync(
-                            chatId: chatId,
-                            text: $"Available questions in '{incomingCommand}' category:",
-                            replyMarkup: markupForAnswer,
-                            cancellationToken: cts.Token);
-                    }
-                    else
-                    {
-                        await botClient.SendTextMessageAsync(
-                            chatId: chatId,
-                            text: "Unknown command.",
-                            cancellationToken: cts.Token);
-                    }
+                    await SendResponseOnCommandAsync(botClient, textFormMessage, chatId, cts.Token);
                 }
                 else
                 {
@@ -286,6 +237,58 @@ namespace Bot.FaqBot
                         cancellationToken: ct
                     );
                     break;
+            }
+        } 
+        private async Task SendResponseOnCommandAsync(ITelegramBotClient bot, string textFormMessage, long chatId, CancellationToken ct)
+        {
+            var incomingCommand = textFormMessage.Remove(0, 1);
+            if (incomingCommand == ALL_QUESTIONS_COMMAND)
+            {       
+                var keyboardWithCallback = new List<List<InlineKeyboardButton>>();
+
+                foreach (var bundle in _faq) {
+                    var botKeyButtonData = InlineKeyboardButton.WithCallbackData(
+                        text: $"{bundle.Question}",
+                        callbackData: bundle.Question);
+                    var buffer = new List<InlineKeyboardButton>();
+                    buffer.Add(botKeyButtonData);
+                    keyboardWithCallback.Add(buffer);
+                }
+
+                var markupForAnswer = new InlineKeyboardMarkup(keyboardWithCallback);
+                await bot.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: $"Available questions:",
+                    replyMarkup: markupForAnswer,
+                    cancellationToken: ct);
+            }
+            else if (_faq.Select(qa => qa.Category.ToLower()).Contains(incomingCommand))
+            {
+                var keyboardWithCallback = new List<List<InlineKeyboardButton>>();
+                var allByCategory = _faq.FindAll(qa => qa.Category.ToLower() == incomingCommand);
+                foreach (var bundle in allByCategory)
+                {
+                    var botKeyButtonData = InlineKeyboardButton.WithCallbackData(
+                        text: $"{bundle.Question}",
+                        callbackData: bundle.Question);
+                    var buffer = new List<InlineKeyboardButton>();
+                    buffer.Add(botKeyButtonData);
+                    keyboardWithCallback.Add(buffer);
+                }
+
+                var markupForAnswer = new InlineKeyboardMarkup(keyboardWithCallback);
+                await bot.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: $"Available questions in '{incomingCommand}' category:",
+                    replyMarkup: markupForAnswer,
+                    cancellationToken: ct);
+            }
+            else
+            {
+                await bot.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: "Unknown command.",
+                    cancellationToken: ct);
             }
         } 
     }
