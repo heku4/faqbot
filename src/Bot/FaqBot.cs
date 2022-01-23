@@ -21,15 +21,24 @@ namespace Bot.FaqBot
     {
         private List<QA> _faq;
         private BotSettings _botSettings;
+        private string _faqFilePath;
         public bool InitStatus = true;
+
         private const string ALL_QUESTIONS_COMMAND = "showquestions";
+        private const string QA_RELOAD_COMMAND = "hotreload";
+        
         public FaqBot(string settingsFilePath, string faqFilePath, string? apiKey)
         {
             if(!BotSetUp(settingsFilePath, faqFilePath, apiKey))
             {
                 InitStatus = false;
             }
+            else
+            {
+                _faqFilePath = faqFilePath;
+            }
         }
+        
         public async Task BotRun(CancellationTokenSource cts)
         {
             var botClient = new TelegramBotClient(_botSettings.ApiKey);
@@ -131,31 +140,20 @@ namespace Bot.FaqBot
                 Console.WriteLine($"File \"{settingsFilePath}\" is not exist!");
                 return false;
             }
-
-            var fileText = System.IO.File.ReadAllText(faqFilePath);
-            try
-            {
-                _faq = JsonSerializer.Deserialize<List<QA>>(fileText);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
-
-            if (_faq.Count < 1)
-            {
-                Console.WriteLine("Error! faq.json must contain at least one question with an answer.");
-                return false;
-            }
-
+            
             if (!System.IO.File.Exists(faqFilePath))
             {
                 Console.WriteLine($"File \"{faqFilePath}\" is not exist!");
                 return false;
             }
 
-            fileText = System.IO.File.ReadAllText(settingsFilePath);
+            _faq = LoadQuestionsAndAnswers(faqFilePath);
+            if (_faq is null || _faq.Count < 1)
+            {
+                return false;
+            }
+
+            var fileText = System.IO.File.ReadAllText(settingsFilePath);
 
             try
             {
@@ -180,6 +178,26 @@ namespace Bot.FaqBot
             }
 
             return true;
+        }
+
+        private List<QA>? LoadQuestionsAndAnswers(string faqFilePath)
+        {
+            var fileText = System.IO.File.ReadAllText(faqFilePath);
+            try
+            {
+                var result = JsonSerializer.Deserialize<List<QA>>(fileText);
+                if (result.Count < 1)
+                {
+                    Console.WriteLine("Error! faq.json must contain at least one question with an answer.");
+                }
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
         
         private int GetQuestionIndex(string message)
@@ -238,7 +256,8 @@ namespace Bot.FaqBot
                     );
                     break;
             }
-        } 
+        }
+        
         private async Task SendResponseOnCommandAsync(ITelegramBotClient bot, string textFormMessage, long chatId, CancellationToken ct)
         {
             var incomingCommand = textFormMessage.Remove(0, 1);
@@ -261,6 +280,25 @@ namespace Bot.FaqBot
                     text: $"Available questions:",
                     replyMarkup: markupForAnswer,
                     cancellationToken: ct);
+            }
+            else if(incomingCommand == QA_RELOAD_COMMAND)
+            {
+                var bufferQa = LoadQuestionsAndAnswers(_faqFilePath);
+                if (bufferQa is null || bufferQa.Count < 1)
+                {
+                    await bot.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: $"Check FAQ's file path and it's content",
+                        cancellationToken: ct);
+                }
+                else
+                {
+                    _faq = bufferQa;
+                    await bot.SendTextMessageAsync(
+                        chatId: chatId,
+                        text: $"Successfully updated.",
+                        cancellationToken: ct);
+                }
             }
             else if (_faq.Select(qa => qa.Category.ToLower()).Contains(incomingCommand))
             {
