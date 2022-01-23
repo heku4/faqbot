@@ -261,7 +261,7 @@ namespace Bot.FaqBot
         private async Task SendResponseOnCommandAsync(ITelegramBotClient bot, string textFormMessage, long chatId, CancellationToken ct)
         {
             var incomingCommand = textFormMessage.Remove(0, 1);
-            if (incomingCommand == ALL_QUESTIONS_COMMAND)
+            if (incomingCommand == ALL_QUESTIONS_COMMAND || incomingCommand == "start")
             {       
                 var keyboardWithCallback = new List<List<InlineKeyboardButton>>();
 
